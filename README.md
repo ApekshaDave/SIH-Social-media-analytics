@@ -1,112 +1,126 @@
 # 🛡️ NTRO Audience Intelligence Platform
 
-**Unified Multi-Platform NLP & Threat Analytics Dashboard**  
-*Developed for Smart India Hackathon (SIH) Prototype | Team: Null Pointers*
+**Unified Multi-Platform Social Media Analytics & Threat Intelligence Framework**  
+*Smart India Hackathon (SIH) Prototype | Team: Null Pointers*
 
 ---
 
-## 📌 Project Overview
+## 📌 Overview
 
-**NTRO Audience Intelligence** is a multipage security and threat intelligence analytics platform designed for monitoring national audience sentiment, narrative acceleration, regional audience demographics, and coordinated disinformation campaigns across X (Twitter) and Telegram feeds.
+**NTRO Audience Intelligence** is an analyst-grade security intelligence platform built to monitor national audience sentiment, dialect metrics, narrative acceleration, and coordinated disinformation campaigns across X (Twitter) and Telegram feeds.
 
-### 🌟 Key Capabilities
+### 🌟 Core Dashboard Modules
 
-1. **National Sentiment & Emotion Intelligence**: Real-time tracking of overall sentiment index and 4-class emotion classification (*Support*, *Anxiety*, *Sarcasm*, *Anger/Hostility*).
-2. **Force-Directed Influence Topology**: Built with `react-force-graph-2d` for PageRank centrality modeling, Key Opinion Leader (KOL) identification, and 2px dotted red link visualization of **coordinated bot network clusters**.
-3. **Demographics & Language Profiling**: DPDP-compliant profiling of audience age distribution, regional share, and Hinglish code-mix dialect metrics.
-4. **Narrative Acceleration**: Tracking post velocity spikes across X and Telegram with keyword tag cloud clusters.
-5. **Security Alerts Feed**: Automated anomaly detection for bot coordination, disinformation spikes, and sudden sentiment drops.
-6. **Analyst Access Portal**: Enforced analyst authentication with passcode protection.
+1. **Overview Dashboard**: Executive KPI stat cards, 24-hour sentiment progression, and multi-class emotion classification.
+2. **Sentiment Intelligence**: Sentiment progression timeline with multi-class emotion breakdown (*Support*, *Anxiety*, *Sarcasm*, *Anger/Hostility*) and live post sentiment feed.
+3. **Demographics & Dialect Share**: DPDP-compliant age distribution, regional audience share, and Hinglish code-mix dialect metrics.
+4. **Narrative Acceleration & Trends**: Real-time topic velocity tracking across X & Telegram with keyword tag cloud clusters.
+5. **Force-Directed Network Topology (`/network`)**: Powered by `react-force-graph-2d` for PageRank centrality modeling, Key Opinion Leader (KOL) mapping, and **2px dotted red link visualization of coordinated bot network clusters**.
+6. **Security Alerts Feed**: Automated threat detection for bot coordination, disinformation spikes, and rapid sentiment drops.
+7. **Analyst Access Portal**: Role-based access control (RBAC) enforced with analyst passcode validation.
 
 ---
 
 ## 🛠️ Tech Stack
 
-- **Frontend Framework**: React 18 + Vite + TypeScript
+- **Frontend**: React 18, TypeScript, Vite
 - **Styling**: Tailwind CSS
-- **Visualization**: `react-force-graph-2d` (Network Topology), Recharts (Sentiment & Demographics)
+- **Visualizations**: `react-force-graph-2d` (Force-directed network physics), Recharts (Sentiment & Demographics)
 - **Icons**: Lucide React
 - **Routing**: React Router v7
-- **Backend**: FastAPI (Python 3.10+)
+- **Backend API**: FastAPI (Python 3.10+)
 - **Containerization**: Docker & Docker Compose
 
 ---
 
-## 🐳 Option 1: Run with Docker (Recommended for Teams)
+## 🐳 Option 1: Quick Start with Docker (Recommended for Teams)
 
-If you are working in a team, Docker allows **anyone** on your team (Windows, Mac, Linux) to run the full stack with **one single command** without installing Node.js or Python manually!
+Running with Docker ensures that all team members (Windows, Mac, Linux) experience the exact same environment without manual Node.js or Python configuration.
 
-### Step 1: Install Docker Desktop
-- Download & Install [Docker Desktop](https://www.docker.com/products/docker-desktop/).
+### Prerequisites
+- Install **[Docker Desktop](https://www.docker.com/products/docker-desktop/)**
 
-### Step 2: Launch Full Stack Container
+### Step-by-Step Setup
 
-In your project folder, open terminal and run:
+1. **Clone the GitHub Repository**:
+   ```bash
+   git clone https://github.com/ApekshaDave/SIH-Social-media-analytics.git
+   cd SIH-Social-media-analytics
+   ```
 
-```bash
-docker-compose up --build
-```
+2. **Launch Containers**:
+   ```bash
+   docker-compose up --build
+   ```
 
-That's it! 
-- **Frontend App**: Open **`http://localhost:3000`** (Passcode: `1234`)
-- **FastAPI Backend**: Open **`http://localhost:8000`** (Swagger docs at `http://localhost:8000/docs`)
+3. **Access Application**:
+   - **Frontend App**: Open **`http://localhost:3000`** in your browser.
+   - **Analyst Passcode**: Enter **`1234`** to authenticate.
+   - **FastAPI Backend**: Open **`http://localhost:8000`** (Swagger API Docs at `http://localhost:8000/docs`).
 
 ---
 
-## 💻 Option 2: Local Installation (Manual Setup)
+## 💻 Option 2: Manual Local Installation
 
 If you prefer installing dependencies directly on your PC:
 
-### Step 1: Prerequisites
+### Prerequisites
 - **Node.js** (v18.0.0+): [Download Node.js](https://nodejs.org/)
 - **Git**: [Download Git](https://git-scm.com/)
-- **Python** (v3.10+): [Download Python](https://www.python.org/)
+- **Python** (v3.10+ - optional for backend API): [Download Python](https://www.python.org/)
 
-### Step 2: Clone & Install Frontend
-
+### 1. Frontend Setup
 ```bash
 git clone https://github.com/ApekshaDave/SIH-Social-media-analytics.git
 cd SIH-Social-media-analytics
 npm install
 npm run dev
 ```
+Open **`http://localhost:5173/`** or **`http://localhost:5177/`** and authenticate with passcode `1234`.
 
-Open your browser at **`http://localhost:5173/`** (Passcode: `1234`).
-
-### Step 3: Run FastAPI Backend
-
+### 2. Backend Setup (Optional)
 In a new terminal window:
 ```bash
 cd backend
 pip install -r requirements.txt
 python main.py
 ```
+*(Backend API service starts at `http://localhost:8000`)*
 
 ---
 
-## 📂 Project Structure
+## 📁 Repository Structure
 
 ```text
 SIH-Social-media-analytics/
 ├── src/                  # Frontend React + TypeScript + Vite codebase
 │   ├── components/       # UI components (Sidebar, TopBar, StatCard, etc.)
-│   ├── pages/            # 7 Analyst Dashboard modules & Login
+│   ├── pages/            # 7 Dashboard pages & Analyst Login
 │   ├── mock/             # Typed mock dataset (mockData.ts)
-│   └── types/            # Shared TypeScript interfaces
+│   └── types/            # Shared TypeScript interfaces (index.ts)
 ├── backend/              # FastAPI Python backend engine
-│   ├── Dockerfile        # Backend container manifest
+│   ├── Dockerfile        # Backend container build manifest
 │   ├── main.py           # FastAPI REST API endpoints
 │   └── requirements.txt  # Python package dependencies
-├── Dockerfile            # Frontend container manifest
-├── docker-compose.yml    # Multi-container orchestration config
-├── README.md             # Team documentation & guide
-└── package.json          # Node dependencies
+├── public/               # Static assets (favicon.svg)
+├── Dockerfile            # Frontend container build manifest (Nginx production server)
+├── docker-compose.yml    # Docker multi-container orchestration manifest
+├── README.md             # Project documentation & team setup guide
+└── package.json          # Node dependencies & build scripts
 ```
+
+---
+
+## 🔐 Analyst Security & Access Control
+
+- **Passcode Authentication**: Access to the dashboard requires passcode **`1234`**.
+- **Route Protection**: All public routes (`/`, `/sentiment`, `/demographics`, `/trends`, `/network`, `/alerts`) are protected. Unauthenticated navigation automatically redirects to `/login`.
 
 ---
 
 ## 👥 Team & License
 
+- **GitHub Repository**: [ApekshaDave/SIH-Social-media-analytics](https://github.com/ApekshaDave/SIH-Social-media-analytics.git)
 - **Team**: Null Pointers
 - **Event**: Smart India Hackathon (SIH) Prototype
 - **License**: Restricted Government Prototype
