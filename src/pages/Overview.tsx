@@ -1,17 +1,30 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, PieChart, Pie, Cell } from 'recharts';
-import { OverviewSummary, UserRole, SentimentTimePoint, EmotionBreakdown } from '../types';
+import {
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  PieChart,
+  Pie,
+  Cell,
+  CartesianGrid,
+} from 'recharts';
+import { OverviewSummary, UserRole, SentimentTimePoint, EmotionBreakdown, ChartTooltipPayloadItem } from '../types';
 import { StatCard } from '../components/StatCard';
 import { mockSentimentTimePoints, mockEmotions } from '../mock/mockData';
-import { 
-  BarChart3, 
-  TrendingUp, 
-  AlertTriangle, 
-  Share2, 
-  ShieldCheck, 
+import {
+  BarChart3,
+  TrendingUp,
+  AlertTriangle,
+  Share2,
   MessageSquare,
-  ChevronRight
+  ChevronRight,
+  Zap,
+  Radio,
+  ArrowUpRight,
 } from 'lucide-react';
 
 interface OverviewProps {
@@ -22,219 +35,308 @@ interface OverviewProps {
 }
 
 const EMOTION_COLORS: Record<string, string> = {
-  Support: '#639922',
-  Anxiety: '#EF9F27',
-  Sarcasm: '#7F77DD',
-  Anger: '#E24B4A',
-  Hostility: '#E24B4A'
+  Support: '#34C759',
+  Anxiety: '#FF9500',
+  Sarcasm: '#8B5CF6',
+  Anger:   '#FF3B30',
 };
 
-export const Overview: React.FC<OverviewProps> = ({ 
-  summary, 
+interface TooltipProps {
+  active?: boolean;
+  payload?: ChartTooltipPayloadItem[];
+  label?: string;
+}
+
+const CustomTooltip: React.FC<TooltipProps> = ({ active, payload, label }) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="custom-tooltip bg-white/90 backdrop-blur-2xl border border-black/5 shadow-apple p-3 rounded-xl min-w-[140px]">
+        <div className="font-mono text-[10px] text-[#6E6E73] mb-1 font-bold">{label}</div>
+        {payload.map((p) => (
+          <div key={p.dataKey || p.name} className="flex items-center justify-between gap-3 text-[11px] py-0.5">
+            <div className="flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full" style={{ background: p.color || p.fill }} />
+              <span className="text-[#6E6E73] capitalize">{p.dataKey || p.name}</span>
+            </div>
+            <span className="font-bold font-mono text-[#1D1D1F]" style={{ color: p.color || p.fill }}>
+              {p.value}
+            </span>
+          </div>
+        ))}
+      </div>
+    );
+  }
+  return null;
+};
+
+export const Overview: React.FC<OverviewProps> = ({
+  summary,
   sentimentProgression = mockSentimentTimePoints,
-  emotionBreakdown = mockEmotions
+  emotionBreakdown = mockEmotions,
 }) => {
   const navigate = useNavigate();
+  const [timeWindow, setTimeWindow] = useState<'24H' | '7D'>('24H');
 
   return (
     <div className="space-y-6">
-      
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 fade-in">
         <div>
-          <h1 className="text-2xl font-bold text-[#2C2C2A] tracking-tight">National Audience Sentiment & Influence Overview</h1>
-          <p className="text-xs text-[#5F5E5A] mt-0.5">
-            Cross-platform continuous ingestion active across X (Twitter) and Telegram feeds
+          <div className="flex items-center gap-2 mb-1">
+            <div className="relative w-2 h-2">
+              <div className="w-2 h-2 rounded-full bg-[#34C759]" />
+              <div className="absolute inset-0 rounded-full bg-[#34C759] animate-ping opacity-60" />
+            </div>
+            <span className="text-[10px] font-mono font-bold text-[#248A3D] uppercase tracking-widest">
+              Live Intelligence Feed Active
+            </span>
+          </div>
+          <h1 className="text-2xl font-black text-[#1D1D1F] tracking-tight leading-none">
+            National Audience Intelligence
+          </h1>
+          <p className="text-xs text-[#6E6E73] mt-1">
+            Cross-platform continuous ingestion across X (Twitter) and Telegram
           </p>
         </div>
 
-        <div className="flex items-center space-x-3">
-          <button 
-            onClick={() => navigate('/network')}
-            className="px-4 py-2 rounded-xl bg-[#378ADD] hover:bg-[#378ADD]/90 text-white font-bold text-xs shadow-sm transition-all flex items-center space-x-2"
-          >
-            <Share2 className="w-4 h-4" />
-            <span>Explore Network Graph</span>
-          </button>
-        </div>
+        <button
+          onClick={() => navigate('/network')}
+          className="flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold text-white transition-all hover:scale-105 shadow-sm flex-shrink-0 bg-[#007AFF] hover:bg-[#0071E3]"
+        >
+          <Share2 className="w-3.5 h-3.5" />
+          Explore 3D Network Graph
+        </button>
       </div>
 
-      {/* 2x2 Executive KPI Stat Cards */}
+      {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
           label="Total Posts Analyzed"
           value={summary.totalPosts.toLocaleString()}
           icon={MessageSquare}
-          caption="+18.4% volume in 24h"
-          iconColor="text-[#378ADD]"
+          caption={`+${summary.volumeChange24h}% volume in 24h`}
+          accent="#007AFF"
+          accentBg="rgba(0,122,255,0.1)"
+          trend="up"
+          delay={0}
         />
-
         <StatCard
           label="Overall Sentiment Index"
           value={`${summary.sentimentIndex > 0 ? '+' : ''}${summary.sentimentIndex}%`}
           icon={BarChart3}
-          caption={`Dominant Emotion: ${summary.dominantEmotion}`}
-          iconColor="text-[#639922]"
+          caption={`Dominant: ${summary.dominantEmotion}`}
+          accent="#34C759"
+          accentBg="rgba(52,199,89,0.1)"
+          trend="up"
+          delay={1}
         />
-
         <StatCard
           label="Top Trending Topic"
           value={summary.topTrendTopic}
           icon={TrendingUp}
-          caption={`Growth: +${summary.topTrendGrowth}%`}
-          iconColor="text-[#EF9F27]"
+          caption={`+${summary.topTrendGrowth}% acceleration spike`}
+          accent="#FF9500"
+          accentBg="rgba(255,149,0,0.1)"
+          trend="up"
+          delay={2}
         />
-
         <StatCard
-          label="Active Security Alerts"
-          value={summary.activeAlertsCount}
+          label="Active Threat Flags"
+          value={`${summary.activeAlertsCount} Alerts`}
           icon={AlertTriangle}
-          caption={`Bot Clusters: ${summary.botClustersCount} accounts`}
-          iconColor="text-[#E24B4A]"
-          onClick={() => navigate('/alerts')}
+          caption={`${summary.botClustersCount} bot clusters detected`}
+          accent="#FF3B30"
+          accentBg="rgba(255,59,48,0.1)"
+          trend={summary.activeAlertsCount > 0 ? 'down' : 'up'}
+          delay={3}
         />
       </div>
 
-      {/* Main Grid: Sentiment Chart & Emotion Breakdown */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        {/* 24-Hour Sentiment Progression Line Chart */}
-        <div className="lg:col-span-2 bg-[#F1EFE8] rounded-xl border border-[#E5E3DA] p-5 space-y-4">
-          <div className="flex items-center justify-between">
+      {/* Main Analytics Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        {/* Sentiment Timeline */}
+        <div className="lg:col-span-2 glass-card p-5 space-y-4 fade-in-2">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
-              <h2 className="text-base font-bold text-[#2C2C2A]">Sentiment Progression (24 Hours)</h2>
-              <p className="text-xs text-[#5F5E5A]">Tracking aggregate sentiment score trends across all monitored feeds</p>
+              <h2 className="text-sm font-bold text-[#1D1D1F]">Cross-Platform Sentiment Trajectory</h2>
+              <p className="text-[10px] text-[#6E6E73] mt-0.5">Real-time aggregate polarity index over time</p>
             </div>
-            <button 
-              onClick={() => navigate('/sentiment')}
-              className="text-xs font-semibold text-[#378ADD] hover:underline flex items-center space-x-1"
-            >
-              <span>Detailed View</span>
-              <ChevronRight className="w-3.5 h-3.5" />
-            </button>
+            
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-0.5 p-1 rounded-full bg-black/5 border border-black/5">
+                {(['24H', '7D'] as const).map((tw) => (
+                  <button
+                    key={tw}
+                    onClick={() => setTimeWindow(tw)}
+                    className={`px-2.5 py-1 rounded-full text-[10px] font-mono font-bold transition-all ${
+                      timeWindow === tw ? 'bg-white text-[#1D1D1F] shadow-apple' : 'text-[#6E6E73] hover:text-[#1D1D1F]'
+                    }`}
+                  >
+                    {tw}
+                  </button>
+                ))}
+              </div>
+
+              <button
+                onClick={() => navigate('/sentiment')}
+                className="text-[11px] font-semibold text-[#007AFF] hover:underline flex items-center gap-1"
+              >
+                Deep-Dive <ArrowUpRight className="w-3 h-3" />
+              </button>
+            </div>
           </div>
 
-          <div className="w-full h-64">
+          <div className="w-full h-56">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={sentimentProgression} margin={{ top: 10, right: 20, left: -20, bottom: 0 }}>
-                <XAxis dataKey="timestamp" stroke="#5F5E5A" fontSize={11} tickLine={false} />
-                <YAxis stroke="#5F5E5A" fontSize={11} domain={[-20, 100]} tickLine={false} />
-                <Tooltip 
-                  contentStyle={{ backgroundColor: '#FFFFFF', borderRadius: '8px', borderColor: '#E5E3DA', fontSize: '12px' }}
-                />
-                <Line 
-                  type="monotone" 
-                  dataKey="score" 
-                  stroke="#378ADD" 
-                  strokeWidth={3} 
-                  dot={{ r: 4, fill: '#378ADD' }}
-                  activeDot={{ r: 6 }} 
-                />
+              <LineChart data={sentimentProgression} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="2 6" stroke="rgba(0,0,0,0.05)" />
+                <XAxis dataKey="timestamp" stroke="#6E6E73" fontSize={10} tickLine={false} />
+                <YAxis stroke="#6E6E73" fontSize={10} domain={[-20, 100]} tickLine={false} />
+                <Tooltip content={<CustomTooltip />} />
+                <Line type="monotone" dataKey="score" stroke="#007AFF" strokeWidth={2.5} dot={{ r: 3, fill: '#007AFF', strokeWidth: 0 }} activeDot={{ r: 5 }} />
+                <Line type="monotone" dataKey="positive" stroke="#34C759" strokeWidth={1.5} strokeDasharray="4 4" dot={false} />
+                <Line type="monotone" dataKey="negative" stroke="#FF3B30" strokeWidth={1.5} strokeDasharray="4 4" dot={false} />
               </LineChart>
             </ResponsiveContainer>
           </div>
-        </div>
 
-        {/* Emotion Classification Doughnut Chart */}
-        <div className="bg-[#F1EFE8] rounded-xl border border-[#E5E3DA] p-5 space-y-4 flex flex-col justify-between">
-          <div>
-            <h2 className="text-base font-bold text-[#2C2C2A]">Emotion Classification</h2>
-            <p className="text-xs text-[#5F5E5A]">Multi-class NLP emotion tag breakdown</p>
-
-            <div className="w-full h-48 flex items-center justify-center my-2">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={emotionBreakdown}
-                    dataKey="percentage"
-                    nameKey="name"
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={50}
-                    outerRadius={75}
-                    paddingAngle={4}
-                  >
-                    {emotionBreakdown.map((entry) => (
-                      <Cell key={entry.name} fill={EMOTION_COLORS[entry.name] || entry.color || '#378ADD'} />
-                    ))}
-                  </Pie>
-                  <Tooltip 
-                    contentStyle={{ backgroundColor: '#FFFFFF', borderRadius: '8px', borderColor: '#E5E3DA', fontSize: '12px' }}
-                  />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-2 pt-2 border-t border-[#E5E3DA]">
-            {emotionBreakdown.map((item) => (
-              <div key={item.name} className="flex items-center space-x-2 text-xs">
-                <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: EMOTION_COLORS[item.name] || item.color }} />
-                <span className="text-[#5F5E5A] truncate">{item.name}: <strong className="text-[#2C2C2A]">{item.percentage}%</strong></span>
+          {/* Legend */}
+          <div className="flex items-center gap-4 text-[10px] pt-1 border-t border-black/5">
+            {[
+              { color: '#007AFF', label: 'Sentiment Score', dash: false },
+              { color: '#34C759', label: 'Positive', dash: true },
+              { color: '#FF3B30', label: 'Negative', dash: true },
+            ].map((l) => (
+              <div key={l.label} className="flex items-center gap-1.5">
+                <div
+                  className="w-6 h-0.5"
+                  style={{
+                    background: l.color,
+                    borderTop: l.dash ? `2px dashed ${l.color}` : undefined,
+                    backgroundColor: l.dash ? 'transparent' : l.color,
+                  }}
+                />
+                <span className="text-[#6E6E73] font-medium">{l.label}</span>
               </div>
             ))}
           </div>
         </div>
 
+        {/* Emotion Breakdown */}
+        <div className="glass-card p-5 space-y-4 fade-in-3 flex flex-col">
+          <div>
+            <h2 className="text-sm font-bold text-[#1D1D1F]">Emotion Classification</h2>
+            <p className="text-[10px] text-[#6E6E73] mt-0.5">Multi-class NLP emotion tag breakdown</p>
+          </div>
+
+          <div className="w-full h-40 flex items-center justify-center">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={emotionBreakdown}
+                  dataKey="percentage"
+                  nameKey="name"
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={45}
+                  outerRadius={68}
+                  paddingAngle={3}
+                >
+                  {emotionBreakdown.map((entry) => (
+                    <Cell key={entry.name} fill={EMOTION_COLORS[entry.name] || '#6E6E73'} />
+                  ))}
+                </Pie>
+                <Tooltip content={<CustomTooltip />} />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+
+          <div className="flex-1 grid grid-cols-2 gap-2 pt-2 border-t border-black/5">
+            {emotionBreakdown.map((item) => {
+              const c = EMOTION_COLORS[item.name] || '#6E6E73';
+              return (
+                <div key={item.name} className="flex items-center gap-2">
+                  <div
+                    className="w-2 h-2 rounded-full flex-shrink-0"
+                    style={{ background: c }}
+                  />
+                  <div className="min-w-0">
+                    <div className="text-[10px] text-[#6E6E73] truncate font-medium">{item.name}</div>
+                    <div className="font-mono text-xs font-bold" style={{ color: c }}>
+                      {item.percentage}%
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </div>
 
-      {/* Module Overview Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        
-        {/* Demographics Overview Card */}
-        <div 
-          onClick={() => navigate('/demographics')}
-          className="bg-[#F1EFE8] rounded-xl border border-[#E5E3DA] p-5 space-y-3 hover:border-[#378ADD] transition-all cursor-pointer group"
-        >
-          <div className="flex items-center justify-between">
-            <h3 className="font-bold text-sm text-[#2C2C2A] group-hover:text-[#378ADD]">Demographics & Geography</h3>
-            <ChevronRight className="w-4 h-4 text-[#5F5E5A] group-hover:translate-x-1 transition-transform" />
-          </div>
-          <p className="text-xs text-[#5F5E5A]">
-            Age distribution profiling, Hinglish code-mix dialect metrics, and regional audience share.
-          </p>
-          <div className="text-[11px] font-semibold text-[#378ADD] flex items-center space-x-1 pt-1">
-            <ShieldCheck className="w-3.5 h-3.5" />
-            <span>DPDP Compliant Data</span>
-          </div>
-        </div>
-
-        {/* Trends Overview Card */}
-        <div 
-          onClick={() => navigate('/trends')}
-          className="bg-[#F1EFE8] rounded-xl border border-[#E5E3DA] p-5 space-y-3 hover:border-[#378ADD] transition-all cursor-pointer group"
-        >
-          <div className="flex items-center justify-between">
-            <h3 className="font-bold text-sm text-[#2C2C2A] group-hover:text-[#378ADD]">Narrative Acceleration</h3>
-            <ChevronRight className="w-4 h-4 text-[#5F5E5A] group-hover:translate-x-1 transition-transform" />
-          </div>
-          <p className="text-xs text-[#5F5E5A]">
-            Track post velocity spikes across X and Telegram with keyword tag cloud clusters.
-          </p>
-          <div className="text-[11px] font-semibold text-[#EF9F27]">
-            #MakeInIndiaDefense (+184%)
-          </div>
-        </div>
-
-        {/* Security Alerts Overview Card */}
-        <div 
-          onClick={() => navigate('/alerts')}
-          className="bg-[#F1EFE8] rounded-xl border border-[#E5E3DA] p-5 space-y-3 hover:border-[#E24B4A] transition-all cursor-pointer group"
-        >
-          <div className="flex items-center justify-between">
-            <h3 className="font-bold text-sm text-[#2C2C2A] group-hover:text-[#E24B4A]">Security Alerts Feed</h3>
-            <ChevronRight className="w-4 h-4 text-[#5F5E5A] group-hover:translate-x-1 transition-transform" />
-          </div>
-          <p className="text-xs text-[#5F5E5A]">
-            Automated anomaly feed monitoring bot coordination, sentiment drops, and disinformation.
-          </p>
-          <div className="text-[11px] font-semibold text-[#E24B4A]">
-            3 Active Security Flags
-          </div>
-        </div>
-
+      {/* Module Quick-Access Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {[
+          {
+            path: '/demographics',
+            title: 'Demographics & Geography',
+            desc: 'Age distribution, Hinglish dialect metrics, regional audience share',
+            accent: '#007AFF',
+            tag: 'DPDP Compliant',
+            tagColor: '#007AFF',
+            icon: Zap,
+          },
+          {
+            path: '/trends',
+            title: 'Narrative Acceleration',
+            desc: 'Post velocity spikes across X and Telegram with keyword tag clusters',
+            accent: '#FF9500',
+            tag: '#MakeInIndiaDefense +184%',
+            tagColor: '#FF9500',
+            icon: TrendingUp,
+          },
+          {
+            path: '/alerts',
+            title: 'Security Alerts Feed',
+            desc: 'Automated anomaly monitoring: bot coordination, sentiment drops',
+            accent: '#FF3B30',
+            tag: '3 Active Security Flags',
+            tagColor: '#FF3B30',
+            icon: Radio,
+          },
+        ].map((card) => {
+          const Icon = card.icon;
+          return (
+            <button
+              key={card.path}
+              onClick={() => navigate(card.path)}
+              className="glass-card p-5 text-left space-y-3 group hover:scale-[1.01] transition-all duration-200 fade-in-4 cursor-pointer"
+            >
+              <div className="flex items-center justify-between">
+                <div
+                  className="w-7 h-7 rounded-lg flex items-center justify-center"
+                  style={{ background: `${card.accent}15` }}
+                >
+                  <Icon className="w-3.5 h-3.5" style={{ color: card.accent }} />
+                </div>
+                <ChevronRight
+                  className="w-4 h-4 text-[#6E6E73] group-hover:translate-x-1 transition-transform"
+                  style={{ color: card.accent }}
+                />
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-[#1D1D1F]">{card.title}</h3>
+                <p className="text-[11px] text-[#6E6E73] mt-1 leading-relaxed">{card.desc}</p>
+              </div>
+              <div
+                className="text-[10px] font-bold"
+                style={{ color: card.tagColor }}
+              >
+                {card.tag}
+              </div>
+            </button>
+          );
+        })}
       </div>
-
     </div>
   );
 };

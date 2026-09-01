@@ -1,41 +1,65 @@
 import React from 'react';
-import { LucideIcon } from 'lucide-react';
+import { LucideIcon, TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { ScrollCard } from './ScrollCard';
 
 interface StatCardProps {
   label: string;
   value: string | number;
-  caption: string;
   icon: LucideIcon;
-  iconColor?: string;
+  caption?: string;
+  accent: string;
+  accentBg: string;
+  trend?: 'up' | 'down' | 'neutral';
   onClick?: () => void;
+  delay?: number;
 }
 
 export const StatCard: React.FC<StatCardProps> = ({
   label,
   value,
-  caption,
   icon: Icon,
-  iconColor = 'text-[#378ADD]',
-  onClick
+  caption,
+  accent,
+  accentBg,
+  trend,
+  onClick,
+  delay = 0,
 }) => {
-  return (
-    <div 
-      onClick={onClick}
-      className={`bg-[#F1EFE8] rounded-xl border border-[#E5E3DA] p-5 flex flex-col justify-between transition-all ${
-        onClick ? 'cursor-pointer hover:border-[#378ADD] hover:bg-[#EAE8E0]' : ''
-      }`}
-    >
-      <div className="flex items-center justify-between">
-        <span className="text-xs font-bold text-[#5F5E5A] uppercase tracking-wider">{label}</span>
-        <div className={`p-2 rounded-lg bg-white border border-[#E5E3DA] ${iconColor}`}>
-          <Icon className="w-4 h-4" />
-        </div>
-      </div>
+  const TrendIcon = trend === 'up' ? TrendingUp : trend === 'down' ? TrendingDown : Minus;
+  const trendColor = trend === 'up' ? '#34C759' : trend === 'down' ? '#FF3B30' : '#86868B';
 
-      <div className="mt-3">
-        <div className="text-2xl font-bold text-[#2C2C2A] tracking-tight">{value}</div>
-        <p className="text-xs text-[#5F5E5A] mt-1 font-medium">{caption}</p>
+  return (
+    <ScrollCard index={delay / 100} onClick={onClick} className="h-full">
+      <div className={`glass-card p-6 space-y-4 h-full flex flex-col justify-between`}>
+        <div className="flex items-start justify-between">
+          <div
+            className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm"
+            style={{ background: accentBg, color: accent }}
+          >
+            <Icon className="w-5 h-5" />
+          </div>
+          {trend && (
+            <div className="flex items-center gap-1 font-medium text-sm" style={{ color: trendColor }}>
+              <TrendIcon className="w-4 h-4" />
+            </div>
+          )}
+        </div>
+
+        <div>
+          <div className="text-[11px] font-semibold text-[#86868B] uppercase tracking-wider mb-1">
+            {label}
+          </div>
+          <div className="text-3xl font-bold tracking-tight text-[#1D1D1F]">
+            {value}
+          </div>
+        </div>
+
+        {caption && (
+          <div className="text-[12px] text-[#86868B] pt-3 border-t border-black/5 mt-auto">
+            {caption}
+          </div>
+        )}
       </div>
-    </div>
+    </ScrollCard>
   );
 };

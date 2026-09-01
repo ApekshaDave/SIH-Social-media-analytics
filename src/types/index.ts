@@ -110,3 +110,12 @@ export interface AlertItem {
   type: string;
   status: 'ACTIVE' | 'ACKNOWLEDGED';
 }
+
+export interface ChartTooltipPayloadItem {
+  dataKey: string;
+  name?: string;
+  value: number | string;
+  color?: string;
+  fill?: string;
+  payload?: any;
+}
