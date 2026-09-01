@@ -27,92 +27,60 @@
 - **Visualization**: `react-force-graph-2d` (Network Topology), Recharts (Sentiment & Demographics)
 - **Icons**: Lucide React
 - **Routing**: React Router v7
-- **Backend (Optional)**: FastAPI (Python 3.10+)
+- **Backend**: FastAPI (Python 3.10+)
+- **Containerization**: Docker & Docker Compose
 
 ---
 
-## 💻 How to Install & Run on Windows PC
+## 🐳 Option 1: Run with Docker (Recommended for Teams)
 
-Follow these step-by-step instructions to set up and run the platform locally on your computer.
+If you are working in a team, Docker allows **anyone** on your team (Windows, Mac, Linux) to run the full stack with **one single command** without installing Node.js or Python manually!
+
+### Step 1: Install Docker Desktop
+- Download & Install [Docker Desktop](https://www.docker.com/products/docker-desktop/).
+
+### Step 2: Launch Full Stack Container
+
+In your project folder, open terminal and run:
+
+```bash
+docker-compose up --build
+```
+
+That's it! 
+- **Frontend App**: Open **`http://localhost:3000`** (Passcode: `1234`)
+- **FastAPI Backend**: Open **`http://localhost:8000`** (Swagger docs at `http://localhost:8000/docs`)
+
+---
+
+## 💻 Option 2: Local Installation (Manual Setup)
+
+If you prefer installing dependencies directly on your PC:
 
 ### Step 1: Prerequisites
-Ensure you have the following software installed on your PC:
-- **Node.js** (v18.0.0 or higher): [Download Node.js](https://nodejs.org/)
+- **Node.js** (v18.0.0+): [Download Node.js](https://nodejs.org/)
 - **Git**: [Download Git](https://git-scm.com/)
-- **Python** (v3.10 or higher - optional for backend API): [Download Python](https://www.python.org/)
+- **Python** (v3.10+): [Download Python](https://www.python.org/)
 
----
-
-### Step 2: Clone the Repository
-
-Open **PowerShell** or **Command Prompt** (cmd) and run:
+### Step 2: Clone & Install Frontend
 
 ```bash
 git clone https://github.com/ApekshaDave/SIH-Social-media-analytics.git
 cd SIH-Social-media-analytics
-```
-
----
-
-### Step 3: Install Frontend Dependencies
-
-Run the following command in the project root folder to install all required NPM packages:
-
-```bash
 npm install
-```
-
----
-
-### Step 4: Run the Development Server
-
-Start the Vite development server:
-
-```bash
 npm run dev
 ```
 
-You will see output similar to this:
+Open your browser at **`http://localhost:5173/`** (Passcode: `1234`).
 
-```text
-  VITE v5.4.21  ready in 450 ms
+### Step 3: Run FastAPI Backend
 
-  ➜  Local:   http://localhost:5173/
-  ➜  Network: use --host to expose
+In a new terminal window:
+```bash
+cd backend
+pip install -r requirements.txt
+python main.py
 ```
-
----
-
-### Step 5: Access the Dashboard
-
-1. Open your web browser (Chrome, Edge, Firefox, or Brave).
-2. Go to **`http://localhost:5173/`** (or the URL printed in your terminal).
-3. On the **Login Page**, enter the Analyst Passcode:
-   ```text
-   Passcode: 1234
-   ```
-4. Click **Authenticate as Intelligence Analyst** to access the dashboard!
-
----
-
-### Step 6 (Optional): Run the FastAPI Backend
-
-If you wish to run the Python backend service:
-
-1. Open a new terminal window inside the repository folder.
-2. Navigate to the backend folder:
-   ```bash
-   cd backend
-   ```
-3. Install required Python packages:
-   ```bash
-   pip install fastapi uvicorn pydantic
-   ```
-4. Start the FastAPI server:
-   ```bash
-   python main.py
-   ```
-   *(Backend will start running at `http://localhost:8000`)*
 
 ---
 
@@ -120,29 +88,20 @@ If you wish to run the Python backend service:
 
 ```text
 SIH-Social-media-analytics/
-├── src/
-│   ├── components/       # Reusable UI components (Sidebar, TopBar, StatCard, etc.)
-│   ├── pages/            # Dashboard modules (Overview, Sentiment, Demographics, Trends, NetworkGraph, Alerts, Login)
+├── src/                  # Frontend React + TypeScript + Vite codebase
+│   ├── components/       # UI components (Sidebar, TopBar, StatCard, etc.)
+│   ├── pages/            # 7 Analyst Dashboard modules & Login
 │   ├── mock/             # Typed mock dataset (mockData.ts)
-│   ├── types/            # TypeScript interfaces (index.ts)
-│   ├── App.tsx           # Router & protected route configuration
-│   ├── main.tsx          # Application entry point
-│   └── index.css         # Tailwind CSS & design system tokens
+│   └── types/            # Shared TypeScript interfaces
 ├── backend/              # FastAPI Python backend engine
-├── data/                 # Database schema & graph files
-├── public/               # Static assets (favicon.svg)
-├── package.json          # Project dependencies & scripts
-├── README.md             # Installation & documentation guide
-└── vite.config.js        # Vite configuration
+│   ├── Dockerfile        # Backend container manifest
+│   ├── main.py           # FastAPI REST API endpoints
+│   └── requirements.txt  # Python package dependencies
+├── Dockerfile            # Frontend container manifest
+├── docker-compose.yml    # Multi-container orchestration config
+├── README.md             # Team documentation & guide
+└── package.json          # Node dependencies
 ```
-
----
-
-## 🔐 Security & Access Control
-
-The prototype operates on an **Analyst-Only Security Model**:
-- All public-facing routes are protected by default.
-- Access requires typing passcode `1234`. Unauthenticated requests to any page automatically redirect to `/login`.
 
 ---
 
