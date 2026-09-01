@@ -1,0 +1,250 @@
+=== PAGE 1 ===
+Product Requirements Document
+Unified Al Framework for Social Media Audience Intelligence
+Research Organisation (NTRO) Team: NULL POINTERS
+1. Overview
+1.1 Problem
+simultaneously infer sentiment, demographics, trending topics, and influence flow across platforms to
+produce real audience intelligence  not just engagement counts.
+1.2 Goal
+Build a working prototype demonstrating five integrated modules (data pipeline, sentiment inference,
+demographic profiling, trend detection, network analysis), unified into a single analyst dashboard.
+1.3 Target Users
+Phase 1 (primary focus): Analysts and researchers - National security & intelligence analysts, policy
+researchers. Full-access dashboard.
+Phase 2 (later expansion): General public - logged-in users who can view a simplified, view-only version of
+the dashboard.
+1.4 Build Priority
+Mock login flow (to show the auth concept without blocking on real backend auth)
+Real authentication + role-based access
+Simplified public-facing dashboard view (Phase 2 - only after analyst dashboard is solid)
+The general public view is explicitly not a Day 1 priority. It exists in the plan to show scalability/vision, but the
+team should not spend build time on it until the analyst dashboard is fully working.
+2. Architecture Principle: Strict Separation of Concerns
+This is the most important structural rule for the prototype. The system is split into three independent
+layers that communicate only through defined interfaces (APls). No layer should directly depend on another
+ayer's internal code.
+=== PAGE 2 ===
+REST/WebSocket API
+DBQueries/ORM
+FRONTEND
+BACKEND 
+DATA
+(React)
+/（FastAPI)
+JSON over HTTP
+I (Postgres, I
+I Neo4j, ES)I
+Rule of thumb: Frontend never touches the database directly. Backend never renders Ul. Data layer never
+contains business logic - it only stores and returns data.
+3. Layer-by-Layer Breakdown
+3.1 DATA LAYER (fully separated - owns storage only)
+Responsibility: Store, index, and serve raw and processed data. No business logic here.
+Component
+Purpose
+Tech
+Unprocessed posts/media, exactly as
+Raw Data Store
+Data Lake (local filesystem/s3 for prototype)
+ingested
+Structured
+Cleaned, timestamped, queryable data
+PostgreSQL
+Store
+Graph Store
+User relationships, influence connections
+Ne04j
+Elasticsearch (optional for prototype; can
+Search Index
+Fast keyword lookup
+defer)
+Data Layer Rules:
+Exposes data only through a defined schema (tables/nodes), never through ad-hoc queries from other layers
+Has its own migration scripts (version-controlled schema changes)
+Independently testable  should be seedable with mock data without needing the backend running
+Deliverable for prototype: A /data folder/repo containing:
+schema.sq (PostgreSQL tables)
+graph_schema.cypher (Neo4j node/relationship definitions)
+seed_ data.json (mock dataset for testing without live APls)
+=== PAGE 3 ===
+3.2 BACKEND LAYER (owns logic - the only layer allowed to touch the database)
+the frontend. Never renders any Ul.
+Module
+Function
+Endpoint (example)
+Pulls data from X/Telegram APls, pushes to
+Internal (cron/scheduler, not
+Ingestion Service
+queue
+exposed)
+Sentiment Service
+Runs NLP model on new posts
+POST /api/sentiment/analyze
+Demographic
+Infers aggregate follower demographics
+GET /api/demographics/(query_id)
+Service
+Trend Service
+Returns ranked trending topics
+GET /api/trends?window=24h
+Network Service
+Returns influence graph data
+GET/api/network/(topic_id)
+Alert Service
+Pushes real-time alerts
+WebSocket /ws/alerts
+Backend Layer Rules:
+All AI models (BERT/RoBERTa, topic model, bot classifier) live here, wrapped in service functions
+Never returns raw database rows  always returns clean, structured JsON matching an agreed APl contract
+Each module (sentiment, demographics, trends, network) should be its own service/file, independently
+callable and testable
+Should run and be testable with mock data, without needing the frontend or live social media APls
+connected
+Deliverable for prototype: A/backend folder/repo containing:
+main.py (FastAPl app entry point)
+/services/sentiment.py,/services/demographics.py,/services/trends.py,/services/network.py
+/models/ (loaded ML models)
+api_contract.md (documents every endpoint, request/response format - this is what the frontend team
+codes against)
+3.3 Ul/UX Design Requirements (Dashboard)
+Structure: Multipage, not a single scrolling page. Each module gets its own dedicated page/route so the
+interface stays focused and uncluttered:
+/sentiment  Sentiment-over-time detail view
+=== PAGE 4 ===
+/demographicsDemographic breakdown detailview
+/trends- Trending topics/keywords detail view
+/network — Influence graph detail view
+/alerts Real-time alerts feed
+Design principles:
+Minimal: Each page shows only what's needed for that module - no dense walls of data, no unnecessary
+panels. Prioritize whitespace over cramming.
+Interactive: Charts should respond to hover/click (e.g., hovering a sentiment spike shows the driving posts;
+shared" next to a stat, not just a bare number). Avoid jargon-only labels on the Ul itself - save technical
+terms for the pitch, not the interface.
+Bright, clear color palette: Use a vibrant but purposeful palette - one accent color per module (e.g.,
+can jump between modules in one click.
+3.4 FRONTEND LAYER (owns presentation only)
+Responsibility: Dashboard Ul. Calls backend APls, renders data. Contains zero business logic, zero direct
+database access, zero ML code.
+Screen/component
+Purpose
+Overview Dashboard Summary cards: sentiment trend, top topics, alert count
+Sentiment View
+Sentiment-over-time chart
+Demographics View Aggregate demographic breakdown (charts)
+Trends View
+Ranked trending topics/keywords list
+Network View
+Interactive influence graph visualization
+Alerts Panel
+Real-time alert feed
+Frontend Layer Rules:
+Only communicates with the backend via the documented API contract (api_contract.md)
+Should be buildable and demoable using mocked JsoN responses before the backend is even fully working
+- this is critical for parallel development
+=== PAGE 5 ===
+Deliverable for prototype: A /frontend folder/repo containing:
+React app with components matching the screens above
+3.5 User Roles & Authentication (Cross-Cutting)
+Authentication touches all three layers but should be built as a thin layer on top of the existing separation
+ not woven into it.
+Role
+Access Level
+Admin/Analyst (Phase 1 -
+Full multipage dashboard - sentiment, demographics, trends, network
+primary focus)
+graph, alerts
+General Public User (Phase 2 - Simplified dashboard - sentiment overview and trends only (no raw
+later)
+demographic/network data)
+How this stays separated:
+Data layer: A[users table (id, email, password hash, role)  completely separate from the social media data
+tables
+Backend layer: An auth service (/api/auth/login], [
+/api/auth/signup) issuing JWT tokens. Every other
+endpoint checks the token's role before returning data  analyst-only endpoints reject public-role tokens
+Frontend layer: A login screen + route protection (public users simply don't see analyst-only components),
+nothing role-specific baked into the dashboard's data-fetching logic itself
+Recommended build order (respecting "dashboard first"):
+Build the dashboard against mock data with no login (fastest way to get something demoable)
+Once dashboard works, add a simple login screen with hardcoded/mock users (no real backend auth yet)
+just to show the flow
+If time remains, wire up real JWT authentication with the users table and role-based endpoint checks
+This way, if you run out of time, you still have a fully working dashboard demo - authentication becomes a
+'nice add-on we also built" rather than a blocker for your core deliverable.
+4. Why This Separation Matters for Your Team
+With 6 people working in parallel over 36 hours, this structure prevents the most common hackathon failure
+ one person's changes breaking another's code right before the demo.
+Data person can build and seed the database independently
+=== PAGE 6 ===
+Backend/ML people can build and test services against seed data, without waiting for frontend
+Frontend person can build the entire Ul against mock JsON, without waiting for a working backend
+breakage
+Golden rule for the team: Agree on the api_contract.md (what each APl returns) in the first 1-2 hours, before
+anyone writes real code. Everyone builds against that contract, not against each other's in-progress code
+5. Functional Requirements
+ID
+Requirement
+Priority
+FR1 Ingest posts from X (Twitter) and Telegram
+Must-have
+FR2 Store posts with timestamp for chronological tracking
+Must-have
+Classify sentiment (including nuanced emotions: sarcasm,
+FR3
+Must-have
+anxiety, support)
+FR4
+language)
+FR5 Detect and rank trending topics/keywords
+Must-have
+FR6 ldentify high-influence nodes and visualize spread
+Must-have
+FR7 Display unified dashboard combining all above
+Must-have
+FR8 Real-time alerts for anomalies
+Nice-to-have
+FR9 Bot/fake account detection
+Nice-to-have
+FR10Ingest from Instagram, Facebook, Reddit, YouTube
+Nice-to-have (expansion)
+Should-have  build after dashboard
+FR11 Mock login flow (hardcoded users, no real backend auth)
+works
+FR12 Real authentication (signup/login with JWT, role-based access)
+Nice-to-have - only if time remains
+FR13 Public (view-only) simplified dashboard for general users
+Nice-to-have  only if time remains
+6. Non-Functional Requirements
+Privacy: Demographic inference must be aggregate and anonymized  no individual identification
+=== PAGE 7 ===
+Modularity: Each of the 5 modules must be independently runnable/testable
+Demo reliability: System must work fully offline using seed data, in case live APl access fails during the demo
+7. Out of Scope (for 36-hour prototype)
+Full production-scale Kafka/Kinesis streaming (mention in pitch, not required in build)
+Full Elasticsearch integration (optional; basic PostgresQL search is acceptable)
+Complete Cl/cD pipeline (basic GitHub Actions test run is sufficient to demonstrate the concept)
+Multi-language sentiment support beyond English/Hindi (mention as future work)
+8. Success Criteria for Prototype Demo
+I Live or seeded data flows from ingestion → storage → processing → dashboard
+ Sentiment classification visibly working on sample posts
+Demographic breakdown chart renders with sample data
+At least one trending topic correctly surfaced
+Network graph shows at least one identified "influencer" node
+All three layers (frontend/backend/data) demonstrably run independently, then connect live during demo
+Dashboard is fully functional and demoable before authentication is attempted - this is the fallback
+safety net if time runs short
+9. Team Role Mapping (from earlier discussion)
+Role
+Owns
+Data Collector
+Data Layer  ingestion + raw storage
+Sentiment Person
+Backend  sentiment service
+People + Trends Person Backend - demographics + trends services
+Network Person
+Backend - network service + Data Layer (Neo4j schema)
+Dashboard Person
+Frontend - entire React app
+Team Lead
+Integration across all 3 layers + presentation

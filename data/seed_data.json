@@ -1,0 +1,203 @@
+{
+  "summary": {
+    "total_posts_analyzed": 148920,
+    "active_platforms": ["X (Twitter)", "Telegram", "Reddit", "News Feeds"],
+    "overall_sentiment_score": 0.38,
+    "dominant_emotion": "Support",
+    "active_alerts_count": 3,
+    "high_influence_nodes": 12,
+    "detected_bots_count": 142
+  },
+  "sentiment_over_time": [
+    { "timestamp": "00:00", "positive": 45, "negative": 22, "neutral": 33, "sarcasm": 8, "support": 40, "anxiety": 15 },
+    { "timestamp": "04:00", "positive": 42, "negative": 28, "neutral": 30, "sarcasm": 12, "support": 38, "anxiety": 20 },
+    { "timestamp": "08:00", "positive": 58, "negative": 18, "neutral": 24, "sarcasm": 6, "support": 52, "anxiety": 10 },
+    { "timestamp": "12:00", "positive": 64, "negative": 15, "neutral": 21, "sarcasm": 5, "support": 60, "anxiety": 8 },
+    { "timestamp": "16:00", "positive": 52, "negative": 31, "neutral": 17, "sarcasm": 18, "support": 45, "anxiety": 25 },
+    { "timestamp": "20:00", "positive": 60, "negative": 20, "neutral": 20, "sarcasm": 9, "support": 55, "anxiety": 12 },
+    { "timestamp": "24:00", "positive": 68, "negative": 14, "neutral": 18, "sarcasm": 4, "support": 62, "anxiety": 7 }
+  ],
+  "emotion_distribution": [
+    { "name": "Support", "value": 48, "color": "#10B981" },
+    { "name": "Anxiety", "value": 22, "color": "#F59E0B" },
+    { "name": "Sarcasm", "value": 16, "color": "#8B5CF6" },
+    { "name": "Anger", "value": 14, "color": "#EF4444" }
+  ],
+  "posts": [
+    {
+      "id": "p_1001",
+      "platform": "X (Twitter)",
+      "author": "@DefSec_India",
+      "author_name": "Defense Security India",
+      "content": "Major milestone achieved in indigenous defense tech! High resolution satellite constellation now operational. Excellent work by our research teams. #MakeInIndia #NTRO",
+      "language": "en",
+      "sentiment": "positive",
+      "sentiment_score": 0.88,
+      "emotion": "Support",
+      "posted_at": "10 mins ago",
+      "likes": 1420,
+      "retweets": 385,
+      "bot_flag": false
+    },
+    {
+      "id": "p_1002",
+      "platform": "Telegram",
+      "author": "t.me/IntelPulse_IN",
+      "author_name": "IntelPulse Channel",
+      "content": "Sarkar ne naye cyber security guidelines issue kiye hain. Kya yeh privacy policy impact karega? Let us see what happens next. #CyberDefense",
+      "language": "hi-en",
+      "sentiment": "neutral",
+      "sentiment_score": 0.12,
+      "emotion": "Anxiety",
+      "posted_at": "25 mins ago",
+      "likes": 890,
+      "retweets": 210,
+      "bot_flag": false
+    },
+    {
+      "id": "p_1003",
+      "platform": "X (Twitter)",
+      "author": "@BotNet_Alpha99",
+      "author_name": "Alpha News Bot 99",
+      "content": "ALERT: Fake news spreading regarding coastal border security protocol update. Do not fall for unverified reports! #SecurityUpdate",
+      "language": "en",
+      "sentiment": "negative",
+      "sentiment_score": -0.74,
+      "emotion": "Anger",
+      "posted_at": "40 mins ago",
+      "likes": 45,
+      "retweets": 1820,
+      "bot_flag": true
+    },
+    {
+      "id": "p_1004",
+      "platform": "X (Twitter)",
+      "author": "@TechGeek_IN",
+      "author_name": "Rohan Sharma",
+      "content": "Wow, another policy announcement without detailed documentation. Very transparent indeed! /s #TechPolicy",
+      "language": "en",
+      "sentiment": "negative",
+      "sentiment_score": -0.65,
+      "emotion": "Sarcasm",
+      "posted_at": "1 hour ago",
+      "likes": 310,
+      "retweets": 78,
+      "bot_flag": false
+    }
+  ],
+  "demographics": {
+    "age_groups": [
+      { "group": "18-24", "percentage": 34 },
+      { "group": "25-34", "percentage": 42 },
+      { "group": "35-44", "percentage": 16 },
+      { "group": "45+", "percentage": 8 }
+    ],
+    "gender_breakdown": [
+      { "gender": "Male", "percentage": 61, "color": "#3B82F6" },
+      { "gender": "Female", "percentage": 34, "color": "#EC4899" },
+      { "gender": "Other / Anonymized", "percentage": 5, "color": "#9CA3AF" }
+    ],
+    "regions": [
+      { "state": "Delhi NCR", "volume": 38400, "share": "25.8%" },
+      { "state": "Maharashtra", "volume": 32100, "share": "21.5%" },
+      { "state": "Karnataka", "volume": 24500, "share": "16.4%" },
+      { "state": "Tamil Nadu", "volume": 18900, "share": "12.7%" },
+      { "state": "West Bengal", "volume": 14200, "share": "9.5%" },
+      { "state": "Other States", "volume": 20820, "share": "14.1%" }
+    ],
+    "languages": [
+      { "language": "English", "percentage": 48 },
+      { "language": "Hindi-English (Hinglish)", "percentage": 35 },
+      { "language": "Pure Hindi", "percentage": 12 },
+      { "language": "Regional (Tamil, Bengali, Telugu)", "percentage": 5 }
+    ]
+  },
+  "trending_topics": [
+    {
+      "rank": 1,
+      "topic": "#MakeInIndiaDefense",
+      "category": "Defense Tech",
+      "volume_24h": 42800,
+      "growth_rate": "+184%",
+      "sentiment": "Positive",
+      "platforms": { "x": 70, "telegram": 30 },
+      "keywords": ["constellation", "satellite", "indigenous", "NTRO", "radar"]
+    },
+    {
+      "rank": 2,
+      "topic": "#CyberDefensePolicy",
+      "category": "National Security",
+      "volume_24h": 31200,
+      "growth_rate": "+92%",
+      "sentiment": "Neutral",
+      "platforms": { "x": 55, "telegram": 45 },
+      "keywords": ["guidelines", "encryption", "CERT-In", "data law"]
+    },
+    {
+      "rank": 3,
+      "topic": "#CoordinatedBotNetwork",
+      "category": "Anomaly Warning",
+      "volume_24h": 18500,
+      "growth_rate": "+310%",
+      "sentiment": "Negative",
+      "platforms": { "x": 88, "telegram": 12 },
+      "keywords": ["amplification", "disinformation", "coastal security", "fake alert"]
+    },
+    {
+      "rank": 4,
+      "topic": "#AIResearchGrant",
+      "category": "Policy & Innovation",
+      "volume_24h": 14200,
+      "growth_rate": "+45%",
+      "sentiment": "Positive",
+      "platforms": { "x": 62, "telegram": 38 },
+      "keywords": ["deeptech", "NTRO grant", "researchers", "IITs"]
+    }
+  ],
+  "network_graph": {
+    "nodes": [
+      { "id": "u1", "label": "@DefSec_India", "type": "influencer", "followers": 245000, "pagerank": 0.095, "bot_score": 0.01, "color": "#10B981" },
+      { "id": "u2", "label": "t.me/IntelPulse_IN", "type": "channel", "followers": 180000, "pagerank": 0.082, "bot_score": 0.04, "color": "#3B82F6" },
+      { "id": "u3", "label": "@BotNet_Alpha99", "type": "bot_node", "followers": 1200, "pagerank": 0.068, "bot_score": 0.94, "color": "#EF4444" },
+      { "id": "u4", "label": "@BotNet_Beta41", "type": "bot_node", "followers": 850, "pagerank": 0.051, "bot_score": 0.91, "color": "#EF4444" },
+      { "id": "u5", "label": "@PolicyAnalyst_IN", "type": "researcher", "followers": 45000, "pagerank": 0.042, "bot_score": 0.02, "color": "#8B5CF6" },
+      { "id": "u6", "label": "@CitizenObserver", "type": "public_user", "followers": 3200, "pagerank": 0.021, "bot_score": 0.05, "color": "#06B6D4" }
+    ],
+    "edges": [
+      { "source": "u1", "target": "u5", "label": "AMPLIFIED_BY", "weight": 8.5 },
+      { "source": "u3", "target": "u4", "label": "COORDINATED_WITH", "weight": 14.2 },
+      { "source": "u3", "target": "u2", "label": "TARGETED_MENTION", "weight": 6.1 },
+      { "source": "u5", "target": "u6", "label": "RESHARED_TO", "weight": 4.0 },
+      { "source": "u2", "target": "u1", "label": "CITED", "weight": 9.0 }
+    ]
+  },
+  "alerts": [
+    {
+      "id": "alt_901",
+      "type": "BOT_COORDINATION",
+      "severity": "CRITICAL",
+      "title": "Coordinated Bot Amplification Detected",
+      "description": "Cluster of 14 bot accounts (@BotNet_Alpha99, @BotNet_Beta41, etc.) artificially amplifying disinformation regarding coastal security.",
+      "time": "12 mins ago",
+      "status": "ACTIVE"
+    },
+    {
+      "id": "alt_902",
+      "type": "SENTIMENT_SPIKE",
+      "severity": "WARNING",
+      "title": "Negative Sentiment Surge on #TechPolicy",
+      "description": "Sarcasm and negative sentiment increased by +42% in past 2 hours following preliminary policy draft release.",
+      "time": "45 mins ago",
+      "status": "ACTIVE"
+    },
+    {
+      "id": "alt_903",
+      "type": "HIGH_SPREAD_TOPIC",
+      "severity": "INFO",
+      "title": "#MakeInIndiaDefense Trend Spike",
+      "description": "Post velocity reached 1,800 posts/min with 88% positive sentiment across X and Telegram.",
+      "time": "2 hours ago",
+      "status": "ACKNOWLEDGED"
+    }
+  ]
+}
